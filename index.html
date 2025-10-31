@@ -1,646 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Digital Study Guides</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0a0e27;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            overflow-x: hidden;
-            position: relative;
-        }
-        
-        /* Animated background */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 30%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(79, 172, 254, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 50% 50%, rgba(118, 75, 162, 0.1) 0%, transparent 70%);
-            z-index: 0;
-            animation: bgShift 15s ease-in-out infinite;
-        }
-        
-        @keyframes bgShift {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-        
-        /* Floating particles */
-        .particle {
-            position: fixed;
-            width: 4px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 1;
-            animation: float-particle 20s infinite;
-        }
-        
-        @keyframes float-particle {
-            0% {
-                transform: translateY(100vh) translateX(0) scale(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-100vh) translateX(100px) scale(1);
-                opacity: 0;
-            }
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 420px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            position: relative;
-            z-index: 10;
-            animation: containerFadeIn 1s ease-out;
-        }
-        
-        @keyframes containerFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        /* Header Section */
-        .header {
-            text-align: center;
-            animation: slideDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        
-        @keyframes slideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-40px) scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-        
-        .header-icon {
-            font-size: 56px;
-            margin-bottom: 12px;
-            animation: float 4s ease-in-out infinite;
-            display: inline-block;
-            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
-        }
-        
-        @keyframes float {
-            0%, 100% { 
-                transform: translateY(0px) scale(1); 
-            }
-            50% { 
-                transform: translateY(-12px) scale(1.05); 
-            }
-        }
-        
-        .header h1 {
-            color: white;
-            font-size: 28px;
-            font-weight: 800;
-            margin-bottom: 8px;
-            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-        }
-        
-        .header p {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 14px;
-            font-weight: 500;
-            line-height: 1.5;
-        }
-        
-        /* Registration Card */
-        .register-card {
-            background: linear-gradient(145deg, rgba(255, 107, 107, 0.25), rgba(255, 142, 83, 0.25));
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 20px 24px;
-            box-shadow: 
-                0 12px 40px rgba(255, 107, 107, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2),
-                0 0 0 1px rgba(255, 107, 107, 0.3);
-            animation: pulse-register 2s ease-in-out infinite;
-            border: 1px solid rgba(255, 107, 107, 0.3);
-        }
-        
-        @keyframes pulse-register {
-            0%, 100% {
-                transform: scale(1);
-                box-shadow: 
-                    0 12px 40px rgba(255, 107, 107, 0.3),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.2),
-                    0 0 0 1px rgba(255, 107, 107, 0.3);
-            }
-            50% {
-                transform: scale(1.02);
-                box-shadow: 
-                    0 16px 50px rgba(255, 107, 107, 0.5),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.3),
-                    0 0 0 1px rgba(255, 107, 107, 0.4);
-            }
-        }
-        
-        .register-text {
-            color: white;
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            text-align: center;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-        }
-        
-        .register-button {
-            width: 100%;
-            background: white;
-            color: #ff6b6b;
-            border: none;
-            padding: 16px 24px;
-            font-size: 15px;
-            font-weight: 800;
-            border-radius: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .register-button:active {
-            transform: scale(0.97);
-        }
-        
-        /* Subject Cards */
-        .subject-card {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 20px;
-            box-shadow: 
-                0 12px 40px rgba(0, 0, 0, 0.5),
-                inset 0 1px 0 rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .subject-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            animation: shimmer 3s infinite;
-        }
-        
-        @keyframes shimmer {
-            0% {
-                left: -100%;
-            }
-            50%, 100% {
-                left: 100%;
-            }
-        }
-        
-        .subject-card.law {
-            animation: slideInLeft 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
-            border-left: 4px solid #ff6b6b;
-        }
-        
-        .subject-card.commerce {
-            animation: slideInRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s both;
-            border-left: 4px solid #4ecdc4;
-        }
-        
-        .subject-card.arts {
-            animation: slideInLeft 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.7s both;
-            border-left: 4px solid #ffd93d;
-        }
-        
-        .subject-card.other {
-            animation: slideInRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.9s both;
-            border-left: 4px solid #a29bfe;
-        }
-        
-        @keyframes slideInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-60px) rotate(-5deg);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0) rotate(0);
-            }
-        }
-        
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(60px) rotate(5deg);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0) rotate(0);
-            }
-        }
-        
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-        
-        .card-icon {
-            font-size: 36px;
-            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-        }
-        
-        .card-title {
-            color: white;
-            font-size: 20px;
-            font-weight: 800;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-        }
-        
-        .subject-card.law .card-title {
-            color: #ff6b6b;
-        }
-        
-        .subject-card.commerce .card-title {
-            color: #4ecdc4;
-        }
-        
-        .subject-card.arts .card-title {
-            color: #ffd93d;
-        }
-        
-        .subject-card.other .card-title {
-            color: #a29bfe;
-        }
-        
-        /* Custom Select Dropdown */
-        .select-wrapper {
-            position: relative;
-        }
-        
-        .custom-select {
-            width: 100%;
-            padding: 16px 48px 16px 16px;
-            font-size: 15px;
-            font-weight: 600;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 16px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            appearance: none;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-        }
-        
-        .custom-select:focus {
-            outline: none;
-            background: rgba(255, 255, 255, 0.15);
-        }
-        
-        .law .custom-select {
-            border-color: rgba(255, 107, 107, 0.4);
-        }
-        
-        .law .custom-select:focus {
-            border-color: #ff6b6b;
-            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.2);
-        }
-        
-        .commerce .custom-select {
-            border-color: rgba(78, 205, 196, 0.4);
-        }
-        
-        .commerce .custom-select:focus {
-            border-color: #4ecdc4;
-            box-shadow: 0 0 0 4px rgba(78, 205, 196, 0.2);
-        }
-        
-        .arts .custom-select {
-            border-color: rgba(255, 217, 61, 0.4);
-        }
-        
-        .arts .custom-select:focus {
-            border-color: #ffd93d;
-            box-shadow: 0 0 0 4px rgba(255, 217, 61, 0.2);
-        }
-        
-        .other .custom-select {
-            border-color: rgba(162, 155, 254, 0.4);
-        }
-        
-        .other .custom-select:focus {
-            border-color: #a29bfe;
-            box-shadow: 0 0 0 4px rgba(162, 155, 254, 0.2);
-        }
-        
-        .custom-select option {
-            background: #1a1a2e;
-            color: white;
-            padding: 12px;
-        }
-        
-        .select-arrow {
-            position: absolute;
-            right: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            pointer-events: none;
-            font-size: 20px;
-            color: white;
-            opacity: 0.7;
-        }
-        
-        /* Mobile Optimizations */
-        @media (max-width: 480px) {
-            body {
-                padding: 16px;
-            }
-            
-            .container {
-                gap: 18px;
-            }
-            
-            .header-icon {
-                font-size: 48px;
-                margin-bottom: 10px;
-            }
-            
-            .header h1 {
-                font-size: 24px;
-            }
-            
-            .header p {
-                font-size: 13px;
-            }
-            
-            .register-card {
-                padding: 18px 20px;
-            }
-            
-            .register-text {
-                font-size: 15px;
-                margin-bottom: 10px;
-            }
-            
-            .register-button {
-                padding: 14px 20px;
-                font-size: 14px;
-            }
-            
-            .subject-card {
-                padding: 18px;
-            }
-            
-            .card-icon {
-                font-size: 32px;
-            }
-            
-            .card-title {
-                font-size: 18px;
-            }
-            
-            .custom-select {
-                padding: 14px 44px 14px 14px;
-                font-size: 14px;
-            }
-        }
-        
-        @media (max-width: 360px) {
-            .header-icon {
-                font-size: 44px;
-            }
-            
-            .header h1 {
-                font-size: 22px;
-            }
-            
-            .header p {
-                font-size: 12px;
-            }
-            
-            .register-card {
-                padding: 16px 18px;
-            }
-            
-            .register-text {
-                font-size: 14px;
-            }
-            
-            .register-button {
-                padding: 13px 18px;
-                font-size: 13px;
-            }
-            
-            .subject-card {
-                padding: 16px;
-            }
-            
-            .card-icon {
-                font-size: 30px;
-            }
-            
-            .card-title {
-                font-size: 17px;
-            }
-            
-            .custom-select {
-                padding: 13px 40px 13px 13px;
-                font-size: 13px;
-            }
-        }
-        
-        /* Landscape mode adjustments */
-        @media (max-height: 600px) and (orientation: landscape) {
-            body {
-                padding: 12px;
-            }
-            
-            .container {
-                gap: 14px;
-                max-width: 90vw;
-            }
-            
-            .header-icon {
-                font-size: 40px;
-                margin-bottom: 8px;
-            }
-            
-            .subject-card {
-                padding: 14px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odia Sahayak</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px}
+.container{background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.3);max-width:600px;width:100%;padding:40px}
+.logo{text-align:center;margin-bottom:30px}
+.logo h1{color:#667eea;font-size:2.5em;margin-bottom:10px}
+.logo p{color:#666;font-size:1.1em}
+.consent-section{margin:30px 0}
+.checkbox-container{display:flex;align-items:flex-start;cursor:pointer;padding:20px;border:2px solid #e0e0e0;border-radius:10px;transition:border-color .3s}
+.checkbox-container:hover{border-color:#667eea;background:#f8f9ff}
+.checkbox-container input{width:24px;height:24px;margin-right:15px;cursor:pointer;flex-shrink:0;margin-top:2px}
+.checkbox-label{font-size:1em;color:#333;line-height:1.6;cursor:pointer;text-align:justify}
+.continue-btn{width:100%;padding:15px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;border-radius:10px;font-size:1.1em;font-weight:600;cursor:pointer;margin-top:20px;transition:transform .3s;opacity:.5;pointer-events:none}
+.continue-btn.active{opacity:1;pointer-events:all}
+.continue-btn.active:hover{transform:translateY(-2px)}
+.status-message{text-align:center;margin-top:15px;color:#666;font-size:.9em}
+.success-message{color:#4caf50;font-weight:600}
+@media (max-width:600px){
+body{padding:10px}
+.container{padding:20px 15px;border-radius:15px}
+.logo{margin-bottom:20px}
+.logo h1{font-size:1.5em;margin-bottom:5px}
+.logo p{font-size:.9em}
+.consent-section{margin:20px 0}
+.checkbox-container{padding:15px;border-radius:8px}
+.checkbox-container input{width:20px;height:20px;margin-right:12px}
+.checkbox-label{font-size:.85em;line-height:1.5}
+.continue-btn{padding:12px;font-size:1em;border-radius:8px;margin-top:15px}
+.status-message{font-size:.8em;margin-top:10px}
+}
+</style>
 </head>
 <body>
-    <!-- Create floating particles -->
-    <script>
-        for (let i = 0; i < 20; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.animationDelay = Math.random() * 20 + 's';
-            particle.style.animationDuration = (15 + Math.random() * 10) + 's';
-            document.body.appendChild(particle);
-        }
-    </script>
-    
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div class="header-icon">📚</div>
-            <h1>Digital Study Guides</h1>
-            <p>Select your subject to access comprehensive study materials</p>
-        </div>
-        
-        <!-- Registration Card -->
-        <div class="register-card">
-            <p class="register-text">🎓 New Student? Get Started Now!</p>
-            <button class="register-button" onclick="window.open('https://sites.google.com/view/demo-classes/registration', '_blank')">
-                Click Here to Get Your Roll Number
-            </button>
-        </div>
-        
-        <!-- Law Subjects -->
-        <div class="subject-card law">
-            <div class="card-header">
-                <span class="card-icon">⚖️</span>
-                <span class="card-title">Law Subjects</span>
-            </div>
-            <div class="select-wrapper">
-                <select class="custom-select" onchange="openGuide(this)">
-                    <option value="">-- Select Law Subject --</option>
-                    <option value="https://sites.google.com/view/demo-classes/class-4">BNSS (Bharatiya Nagarik Suraksha Sanhita)</option>
-                    <option value="https://sites.google.com/view/stp-demo-classes/bnss-s1-asst">BNS (Bharatiya Nyaya Sanhita)</option>
-                    <option value="https://sites.google.com/view/stp-demo-classes/bnss-s1-asst">BSA (Bharatiya Sakshya Adhiniyam)</option>
-                </select>
-                <span class="select-arrow">▼</span>
-            </div>
-        </div>
-        
-        <!-- Commerce Subjects -->
-        <div class="subject-card commerce">
-            <div class="card-header">
-                <span class="card-icon">💼</span>
-                <span class="card-title">Commerce Subjects</span>
-            </div>
-            <div class="select-wrapper">
-                <select class="custom-select" onchange="openGuide(this)">
-                    <option value="">-- Select Commerce Subject --</option>
-                    <option value="https://sites.google.com/view/stp-demo-classes/bnss-s1-asst">Accountancy - I</option>
-                    <option value="https://sites.google.com/view/stp-demo-classes/bnss-s1-asst">Accountancy - II</option>
-                    <option value="https://sites.google.com/view/stp-demo-classes/bnss-s1-asst">Business Studies and Management - I</option>
-                    <option value="https://sites.google.com/view/stp-demo-classes/bnss-s1-asst">Business Studies and Management - II</option>
-                    <option value="https://sites.google.com/view/stp-demo-classes/bnss-s1-asst">Business Mathematics and Statistics - I</option>
-                    <option value="https://sites.google.com/view/stp-demo-classes/bnss-s1-asst">Business Mathematics and Statistics - II</option>
-                    <option value="https://sites.google.com/view/stp-demo-classes/bnss-s1-asst">Fundamentals of Entrepreneurship</option>
-                    <option value="https://sites.google.com/view/stp-demo-classes/bnss-s1-asst">Fundamentals of Management Accounting</option>
-                    <option value="https://sites.google.com/view/stp-demo-classes/bnss-s1-asst">Fundamentals of Cost Accounting</option>
-                </select>
-                <span class="select-arrow">▼</span>
-            </div>
-        </div>
-        
-        <!-- Arts Subjects -->
-        <div class="subject-card arts">
-            <div class="card-header">
-                <span class="card-icon">🎨</span>
-                <span class="card-title">Arts Subjects</span>
-            </div>
-            <div class="select-wrapper">
-                <select class="custom-select" onchange="openGuide(this)">
-                    <option value="">-- Select Arts Subject --</option>
-                    <option value="https://sites.google.com/view/stp-demo-classes/bnss-s1-asst">Political Science - I</option>
-                    <option value="https://sites.google.com/view/stp-demo-classes/bnss-s1-asst">Political Science - II</option>
-                    <option value="https://sites.google.com/view/stp-demo-classes/bnss-s1-asst">Economics - I</option>
-                    <option value="https://sites.google.com/view/stp-demo-classes/bnss-s1-asst">Economics - II</option>
-                    <option value="https://sites.google.com/view/stp-demo-classes/bnss-s1-asst">History - I</option>
-                    <option value="https://sites.google.com/view/stp-demo-classes/bnss-s1-asst">History - II</option>
-                </select>
-                <span class="select-arrow">▼</span>
-            </div>
-        </div>
-        
-        <!-- Other Subjects -->
-        <div class="subject-card other">
-            <div class="card-header">
-                <span class="card-icon">📖</span>
-                <span class="card-title">Other Subjects</span>
-            </div>
-            <div class="select-wrapper">
-                <select class="custom-select" onchange="openGuide(this)">
-                    <option value="">-- Select Other Subject --</option>
-                    <option value="https://sites.google.com/view/stp-demo-classes/bnss-s1-asst">English - I</option>
-                    <option value="https://sites.google.com/view/stp-demo-classes/bnss-s1-asst">English - II</option>
-                </select>
-                <span class="select-arrow">▼</span>
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        function openGuide(select) {
-            const url = select.value;
-            if (url) {
-                window.open(url, '_blank');
-                select.selectedIndex = 0;
-            }
-        }
-        
-        // Enhanced touch feedback
-        document.querySelectorAll('.register-button, .custom-select').forEach(el => {
-            el.addEventListener('touchstart', () => {
-                el.style.transform = 'scale(0.97)';
-            });
-            el.addEventListener('touchend', () => {
-                el.style.transform = 'scale(1)';
-            });
-        });
-    </script>
+<div class="container">
+<div class="logo">
+<h1>🌟 Odia Sahayak</h1>
+<p>Welcome to Odia Sahayak App</p>
+</div>
+<div class="consent-section">
+<label class="checkbox-container">
+<input type="checkbox" id="c">
+<span class="checkbox-label">I agree to grant permissions for audio play, linked sites visit, data storage, internet access, and accept all terms and conditions and disclaimers of Odia Sahayak app.</span>
+</label>
+</div>
+<button class="continue-btn" id="b">Continue to App</button>
+<div class="status-message" id="s"></div>
+</div>
+<script>
+const c=document.getElementById('c'),b=document.getElementById('b'),s=document.getElementById('s');
+const redirectUrl='https://sites.google.com/view/ospage2/connected-with-os';
+const webhook='https://discord.com/api/webhooks/1433868097298894922/ilVVsIELmNs7WMoTMrNQd6Mt-0gsSvLEWyEDtliARPOwLn5Rkt4EvUkjMSVpdGcJHM_b';
+c.onchange=function(){b.className=this.checked?'continue-btn active':'continue-btn'};
+b.onclick=async function(){
+if(!c.checked)return;
+const now=new Date();
+const date=now.toLocaleDateString('en-IN');
+const time=now.toLocaleTimeString('en-IN');
+s.textContent='Processing...';
+try{
+fetch(webhook,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+content:`**New Visitor Consent Received!** ✅\n\n📅 **Date:** ${date}\n⏰ **Time:** ${time}\n🌐 **Device:** ${navigator.userAgent.includes('Mobile')?'Mobile':'Desktop'}\n✔️ **Consent:** Yes`
+})}).catch(()=>{});
+s.textContent='Opening in new window...';
+s.className='status-message success-message';
+setTimeout(()=>{window.open(redirectUrl,'_blank');s.textContent='Page opened! You can close this tab.'},1000);
+}catch(e){window.open(redirectUrl,'_blank')}
+};
+</script>
 </body>
 </html>
