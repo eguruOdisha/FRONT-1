@@ -1,1 +1,1 @@
-this is the second page of os
+this is the permission page of os
